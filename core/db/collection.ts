@@ -79,6 +79,24 @@ class Collection {
     });
   }
 
+  findOneWithFields(query: Query, fields: { [name: string]: number } = { }): Future<any> {
+    return this.returnFailedFutureOnError(() => {
+      let collection = this.collection;
+
+      return Future.denodify(collection.findOne, collection, query.query, fields)
+      .map((doc: any) => {
+        if (doc === null) {
+          return null;
+        }
+        if (_.isEmpty(fields)) {
+          return this.newDocument(doc);
+        } else {
+          return doc;
+        }
+      });
+    });
+  }
+
   findOne(query: Query): Future<Document> {
     return this.returnFailedFutureOnError(() => {
       let collection = this.collection;

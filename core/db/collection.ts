@@ -60,11 +60,11 @@ class Collection {
     });
   }
 
-  findWithFields(query: Query, option: mongodb.CollectionFindOptions = { }, fields: { [name: string]: number } = { }): Future<any> {
+  findWithFields(query: Query, fields: { [name: string]: number } = { }, option: mongodb.CollectionFindOptions = { }): Future<any> {
     return this.returnFailedFutureOnError(() => {
       assert(_.isObject(option));
 
-      let cursor = this.collection.find(query.query, option, fields);
+      let cursor = this.collection.find(query.query, fields, option);
 
       return Future.denodify(cursor.toArray, cursor)
       .map((docs: any[]) => {

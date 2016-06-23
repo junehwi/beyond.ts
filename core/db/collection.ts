@@ -60,6 +60,29 @@ class Collection {
     });
   }
 
+  findWithFields(query: Query, option: mongodb.CollectionFindOptions = { }, fields: { [name: string]: number } = { }): Future<any> {
+    return this.returnFailedFutureOnError(() => {
+      assert(_.isObject(option));
+
+      let cursor = this.collection.find(query.query, option, fields);
+
+      return Future.denodify(cursor.toArray, cursor)
+      .map((docs: any[]) => {
+        return _.map(docs, (doc: any) => {
+          if (doc === null) {
+            return null;
+          }
+
+          if (_.isEmpty(fields)) {
+            return this.newDocument(doc);
+          } else {
+            return doc;
+          }
+        });
+      });
+    });
+  }
+
   find(query: Query, option: mongodb.CollectionFindOptions = { }): Future<Document[]> {
     return this.returnFailedFutureOnError(() => {
       assert(_.isObject(option));

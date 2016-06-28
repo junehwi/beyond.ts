@@ -28,6 +28,7 @@ function initializeExitHandler() {
   process.on('uncaughtException', (ex: Error) => {
     console.error('Uncaught exception %j', ex);
     exitHandler();
+    process.exit(-1);
   });
 }
 
